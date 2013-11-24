@@ -19,11 +19,12 @@
 #  http://www.gnu.org/copyleft/gpl.html
 
 import os
-import xbmcaddon
+#import xbmcaddon
 
-__addon__		= xbmcaddon.Addon("script.raspbmc.browserlaunch")
-__scriptPath__	= __addon__.getAddonInfo('path')
-your_script	= os.path.join(__scriptPath__, 'resources', 'your_script_name')
+#__addon__		= xbmcaddon.Addon("script.raspbmc.browserlaunch")
+#__scriptPath__	= __addon__.getAddonInfo('path')
+#your_script	= os.path.join(__scriptPath__, 'resources', 'your_script_name')
 
 if __name__ == "__main__":
-	os.system('sh %s' % your_script)
+#	os.system('sh %s' % your_script)
+    os.system('sh /foo/bar.sh')
