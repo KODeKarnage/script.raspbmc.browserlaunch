@@ -81,10 +81,12 @@ def download_file(app_verb):
 		#check md5 of downloaded file
 		prog_bar.update(100,'Verifying file...')
 		my_md5 = hashlib.md5(open(file_name, 'rb').read()).digest()
+		file_name.close()
 		source_md5 = urllib2.urlopen(browser_md5_url).read()
 
 		if my_md5 != source_md5:
 			#continue without update
+			#insert notification, if the browser exists then launch it, otherwise die
 			prog_bar.close()
 			launch_browser()
 		else:
@@ -100,4 +102,4 @@ def launch_browser():
 
 if __name__ == "__main__":
 	Launch()
-    
+
