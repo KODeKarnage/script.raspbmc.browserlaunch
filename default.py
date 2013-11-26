@@ -21,7 +21,6 @@
 import os
 import urllib2
 import xbmcgui
-import sys
 import hashlib
 
 
@@ -80,24 +79,28 @@ def download_file(app_verb):
 
 		#check md5 of downloaded file
 		prog_bar.update(100,'Verifying file...')
-		my_md5 = hashlib.md5(open(file_name, 'rb').read()).digest()
-		file_name.close()
+		my_md5     = hashlib.md5(open(file_name, 'rb').read()).digest()
 		source_md5 = urllib2.urlopen(browser_md5_url).read()
+		file_name.close()
 
 		if my_md5 != source_md5:
 			#continue without update
 			#insert notification, if the browser exists then launch it, otherwise die
 			prog_bar.close()
-			launch_browser()
+			
 		else:
 			#update or install browser from download
-			pass
+			prog_bar.update(100,'Extracting...')
+			os.system('sudo gzip -dc browser.tar.gz | tar -xf - -C /')
+			os.system('sudo cp -rf /scripts/upd_sys/* /scripts/upd_hist')
+			prog_bar.close()
+			launch_browser()
 
 		break
 
 def launch_browser():
 	#code to launch the browser
-	os.system('bash /scripts/launch_browser.sh')
+	os.system('sudo bash /scripts/launch_browser.sh')
 
 
 if __name__ == "__main__":
