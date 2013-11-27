@@ -22,13 +22,13 @@ import os
 import urllib2
 import xbmcgui
 import hashlib
-
+import xbmc
 
 
 live_ver_url         = 'http://svn.stmlabs.com/svn/raspbmc/release/update-system/browserver'
 local_ver_loc        = '/scripts/upd_hist/browserver'
-browser_download_url = 'download.raspbmc.com/downloads/bin/browser/browser.tar.gz'
-browser_md5_url      = 'download.raspbmc.com/downloads/bin/browser/browser.md5'
+browser_download_url = 'http://download.raspbmc.com/downloads/bin/browser/browser.tar.gz'
+browser_md5_url      = 'http://download.raspbmc.com/downloads/bin/browser/browser.md5'
 prog_bar             = xbmcgui.DialogProgress()
 dialog               = xbmcgui.Dialog()
 
@@ -40,12 +40,9 @@ def Launch():
 	with open(local_ver_loc,'r') as f:
 		my_ver = f.read()
 
-	if not os.path.exists('/boot/browser.rfs') or my_ver == '':
+	if my_ver == '' or live_ver > my_ver:
 		app_verb = 'Installing...'
-		download_file(app_verb)
-	elif live_ver > my_ver:
-		app_verb = 'Updating...'
-		download_file(app_verb)
+		download_file('Downloading...')
 	else:
 		launch_browser()
 
@@ -55,9 +52,9 @@ def download_file(app_verb):
 	prog_bar.create("Arora Browser","Initializing...")
 	prog_bar.update(0,app_verb)
 
-	while not prog_bar.isCanceled():
+	while not prog_bar.iscanceled():
 
-		file_name    = os.join('/tmp/',browser_download_url.split('/')[-1])
+		file_name    = os.path.join('/tmp/',browser_download_url.split('/')[-1])
 		u            = urllib2.urlopen(browser_download_url)
 		f            = open(file_name, 'wb')
 		meta         = u.info()
@@ -72,26 +69,26 @@ def download_file(app_verb):
 
 		    file_size_dl += len(buffer)
 		    f.write(buffer)
-		    status = file_size_dl * 100. / file_size
+		    status = int(file_size_dl * 100. / file_size)
 		    prog_bar.update(status,app_verb)
 
 		f.close()
 
 		#check md5 of downloaded file
 		prog_bar.update(100,'Verifying file...')
-		my_md5     = hashlib.md5(open(file_name, 'rb').read()).digest()
-		source_md5 = urllib2.urlopen(browser_md5_url).read()
-		file_name.close()
+		with open(file_name, 'rb') as ff:
+			my_md5     = hashlib.md5(ff.read()).hexdigest()
+		source_md5 = urllib2.urlopen(browser_md5_url).read().split(' ')
 
-		if my_md5 != source_md5:
+		if my_md5 != source_md5[0]:
 			#continue without update
 			#insert notification, if the browser exists then launch it, otherwise die
 			prog_bar.close()
-			
+
 		else:
 			#update or install browser from download
 			prog_bar.update(100,'Extracting...')
-			os.system('sudo gzip -dc browser.tar.gz | tar -xf - -C /')
+			os.system('sudo gzip -dc /tmp/browser.tar.gz | tar -xf - -C /')
 			os.system('sudo cp -rf /scripts/upd_sys/* /scripts/upd_hist')
 			prog_bar.close()
 			launch_browser()
@@ -105,4 +102,3 @@ def launch_browser():
 
 if __name__ == "__main__":
 	Launch()
-
