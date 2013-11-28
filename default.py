@@ -37,8 +37,11 @@ def Launch():
 
 	#check version against source
 	live_ver = urllib2.urlopen(live_ver_url).read()
-	with open(local_ver_loc,'r') as f:
-		my_ver = f.read()
+	try:
+		with open(local_ver_loc,'r') as f:
+			my_ver = f.read()
+	except:
+		my_ver = ''
 
 	if my_ver == '' or live_ver > my_ver:
 		app_verb = 'Installing...'
@@ -99,7 +102,7 @@ def download_file(app_verb, my_ver):
 
 def launch_browser():
 	#code to launch the browser
-	os.system('sudo bash /scripts/launch_browser.sh')
+	os.system('sudo bash /scripts/browser.sh')
 
 
 if __name__ == "__main__":
