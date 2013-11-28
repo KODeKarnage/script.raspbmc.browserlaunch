@@ -42,12 +42,12 @@ def Launch():
 
 	if my_ver == '' or live_ver > my_ver:
 		app_verb = 'Installing...'
-		download_file('Downloading...')
+		download_file('Downloading...', my_ver)
 	else:
 		launch_browser()
 
 
-def download_file(app_verb):
+def download_file(app_verb, my_ver):
 
 	prog_bar.create("Arora Browser","Initializing...")
 	prog_bar.update(0,app_verb)
@@ -83,13 +83,15 @@ def download_file(app_verb):
 		if my_md5 != source_md5[0]:
 			#continue without update
 			#insert notification, if the browser exists then launch it, otherwise die
+			if my_ver != '':
+				launch_browser()
 			prog_bar.close()
 
 		else:
 			#update or install browser from download
 			prog_bar.update(100,'Extracting...')
 			os.system('sudo gzip -dc /tmp/browser.tar.gz | tar -xf - -C /')
-			os.system('sudo cp -rf /scripts/upd_sys/* /scripts/upd_hist')
+			os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
 			prog_bar.close()
 			launch_browser()
 
