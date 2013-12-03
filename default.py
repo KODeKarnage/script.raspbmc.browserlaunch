@@ -92,7 +92,7 @@ def install_update(my_ver, live_ver):
 			#update or install browser from download
 			prog_bar.update(100,'Extracting...')
 			os.system('sudo tar -xzf /tmp/browser.tar.gz -C /tmp')
-			os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
+			#os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
 			
 			#confirm and update version number
 			prog_bar.update(100,'Confirming success...')
@@ -113,7 +113,15 @@ def install_update(my_ver, live_ver):
 			#copy tmp browser files to boot
 			os.system('sudo cp -rf /tmp/browse.* /boot')
 
-			#update version
+			#check files copied properly to boot, if not then remove the version file
+			for upd_file in upd_files:
+				if not os.path.isfile(os.path.join('/boot/',upd_file)):
+					#remove vers
+					os.system('sudo rm %s' % local_ver_loc)
+					prog_bar.close()
+					break
+
+			#update version number
 			with open(local_ver_loc, 'w') as fw:
 					fw.write(live_ver)
 
