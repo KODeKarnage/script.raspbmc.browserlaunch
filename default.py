@@ -22,8 +22,6 @@ import os
 import urllib2
 import xbmcgui
 import hashlib
-import xbmc
-
 
 live_ver_url         = 'http://svn.stmlabs.com/svn/raspbmc/release/update-system/browserver'
 local_ver_loc        = '/scripts/upd_hist/browserver'
@@ -32,6 +30,7 @@ browser_md5_url      = 'http://download.raspbmc.com/downloads/bin/browser/browse
 prog_bar             = xbmcgui.DialogProgress()
 dialog               = xbmcgui.Dialog()
 
+upd_files            = ['browser.cmdline', 'browser.elf','browser.img', 'browser.rfs' ]
 
 def Launch():
 
@@ -44,16 +43,15 @@ def Launch():
 		my_ver = ''
 
 	if my_ver == '' or live_ver > my_ver:
-		app_verb = 'Installing...'
-		download_file('Downloading...', my_ver, live_ver)
+		install_update('Downloading...', my_ver, live_ver)
 	else:
 		launch_browser()
 
 
-def download_file(app_verb, my_ver, live_ver):
+def install_update(my_ver, live_ver):
 
 	prog_bar.create("Arora Browser","Initializing...")
-	prog_bar.update(0,app_verb)
+	prog_bar.update(0,'Downloading...')
 
 	while not prog_bar.iscanceled():
 
@@ -73,7 +71,7 @@ def download_file(app_verb, my_ver, live_ver):
 		    file_size_dl += len(buffer)
 		    f.write(buffer)
 		    status = int(file_size_dl * 100. / file_size)
-		    prog_bar.update(status,app_verb)
+		    prog_bar.update(status,'Downloading...')
 
 		f.close()
 
@@ -93,15 +91,33 @@ def download_file(app_verb, my_ver, live_ver):
 		else:
 			#update or install browser from download
 			prog_bar.update(100,'Extracting...')
-			os.system('sudo tar -xzf /tmp/browser.tar.gz -C /boot')
+			os.system('sudo tar -xzf /tmp/browser.tar.gz -C /tmp')
 			os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
-			prog_bar.close()
+			
+			#confirm and update version number
+			prog_bar.update(100,'Confirming success...')
+
+			#check files extracted properly to tmp
+			for upd_file in upd_files:
+				if not os.path.isfile(os.path.join('/tmp/',upd_file)):
+					if my_ver != '':
+						#launch browser if version already exists
+						prog_bar.close()
+						launch_browser()
+						break
+					else:
+						#insert notification of failure
+						prog_bar.close()
+						break
+
+			#copy tmp browser files to boot
+			os.system('sudo cp -rf /tmp/browse.* /boot')
 
 			#update version
-
 			with open(local_ver_loc, 'w') as fw:
-				fw.write(live_ver)
-			
+					fw.write(live_ver)
+
+			prog_bar.close()
 			launch_browser()
 
 		break
