@@ -93,7 +93,7 @@ def download_file(app_verb, my_ver):
 		else:
 			#update or install browser from download
 			prog_bar.update(100,'Extracting...')
-			os.system('sudo tar -xzf /tmp/browser.img -C /boot')
+			os.system('sudo tar -xzf /tmp/browser.tar.gz -C /boot')
 			os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
 			prog_bar.close()
 			launch_browser()
