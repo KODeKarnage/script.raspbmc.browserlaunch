@@ -45,12 +45,12 @@ def Launch():
 
 	if my_ver == '' or live_ver > my_ver:
 		app_verb = 'Installing...'
-		download_file('Downloading...', my_ver)
+		download_file('Downloading...', my_ver, live_ver)
 	else:
 		launch_browser()
 
 
-def download_file(app_verb, my_ver):
+def download_file(app_verb, my_ver, live_ver):
 
 	prog_bar.create("Arora Browser","Initializing...")
 	prog_bar.update(0,app_verb)
@@ -96,6 +96,12 @@ def download_file(app_verb, my_ver):
 			os.system('sudo tar -xzf /tmp/browser.tar.gz -C /boot')
 			os.system('sudo cp -rf /scripts/upd_sys/browserver /scripts/upd_hist')
 			prog_bar.close()
+
+			#update version
+
+			with open(local_ver_loc, 'w') as fw:
+				fw.write(live_ver)
+			
 			launch_browser()
 
 		break
