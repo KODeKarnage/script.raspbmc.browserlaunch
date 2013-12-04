@@ -132,7 +132,9 @@ def install_update(my_ver, live_ver):
 					break
 
 			#update version number
-			os.system("echo " + live_ver + " | sudo tee " + local_ver_loc)
+			with open("/home/pi/browserver", 'w') as fw:
+				fw.write(live_ver)
+			os.system("sudo mv /home/pi/browserver /scripts/upd_hist")
 
 			prog_bar.close()
 			launch_browser()
