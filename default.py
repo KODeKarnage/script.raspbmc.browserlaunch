@@ -22,6 +22,7 @@ import os
 import urllib2
 import xbmcgui
 import hashlib
+import xbmc
 
 live_ver_url         = 'http://svn.stmlabs.com/svn/raspbmc/release/update-system/browserver'
 local_ver_loc        = '/scripts/upd_hist/browserver'
@@ -31,6 +32,9 @@ prog_bar             = xbmcgui.DialogProgress()
 dialog               = xbmcgui.Dialog()
 
 upd_files            = ['browser.cmdline', 'browser.elf','browser.img', 'browser.rfs' ]
+
+def debug_log(text, level=4):
+    xbmc.log('Browser Launcher ' + ' :: ' + text, level)
 
 def Launch():
 
@@ -78,7 +82,7 @@ def install_update(my_ver, live_ver):
 		#check md5 of downloaded file
 		prog_bar.update(100,'Verifying file...')
 		with open(file_name, 'rb') as ff:
-			my_md5     = hashlib.md5(ff.read()).hexdigest()
+			my_md5 = hashlib.md5(ff.read()).hexdigest()
 		source_md5 = urllib2.urlopen(browser_md5_url).read().split(' ')
 
 		if my_md5 != source_md5[0]:
@@ -122,8 +126,7 @@ def install_update(my_ver, live_ver):
 					break
 
 			#update version number
-			with open(local_ver_loc, 'w') as fw:
-					fw.write(live_ver)
+			os.system("echo " + live_ver + " | sudo tee " + local_ver_loc)
 
 			prog_bar.close()
 			launch_browser()
