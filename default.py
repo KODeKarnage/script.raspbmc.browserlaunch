@@ -120,7 +120,7 @@ def install_update(my_ver, live_ver):
 						break
 
 			#copy tmp browser files to boot
-			os.system('sudo cp -rf /tmp/browse.* /boot')
+			os.system('sudo cp -rf /tmp/browser.* /boot')
 
 			#check files copied properly to boot, if not then remove the version file
 			for upd_file in upd_files:
