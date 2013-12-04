@@ -90,6 +90,8 @@ def install_update(my_ver, live_ver):
 			#insert notification, if the browser exists then launch it, otherwise die
 			if my_ver != '':
 				launch_browser()
+
+			debug_log('md5 doesnt match and my_ver is %s' % my_ver)
 			prog_bar.close()
 
 		else:
@@ -105,12 +107,15 @@ def install_update(my_ver, live_ver):
 			for upd_file in upd_files:
 				if not os.path.isfile(os.path.join('/tmp/',upd_file)):
 					if my_ver != '':
+						debug_log('%s not extracted to tmp, my_ver is %s' % (upd_file, my_ver))
 						#launch browser if version already exists
 						prog_bar.close()
 						launch_browser()
+
 						break
 					else:
 						#insert notification of failure
+						debug_log('%s not extracted to tmp, my_ver is %s' % (upd_file, my_ver))
 						prog_bar.close()
 						break
 
@@ -120,6 +125,7 @@ def install_update(my_ver, live_ver):
 			#check files copied properly to boot, if not then remove the version file
 			for upd_file in upd_files:
 				if not os.path.isfile(os.path.join('/boot/',upd_file)):
+					debug_log('%s not copied to boot ' % (upd_file))
 					#remove vers
 					os.system('sudo rm %s' % local_ver_loc)
 					prog_bar.close()
