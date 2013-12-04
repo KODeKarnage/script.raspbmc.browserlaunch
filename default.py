@@ -43,7 +43,7 @@ def Launch():
 		my_ver = ''
 
 	if my_ver == '' or live_ver > my_ver:
-		install_update('Downloading...', my_ver, live_ver)
+		install_update(my_ver, live_ver)
 	else:
 		launch_browser()
 
